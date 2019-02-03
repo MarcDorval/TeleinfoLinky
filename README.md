@@ -1,5 +1,11 @@
 # Scripts bash et Python permettant de monitorer la telealimentation du compteur Linky
 
+* Le Linky est en mode 'standard' (nouveau mode à 9600 bauds au lieu de 1200), ici en triphasé donc avec IRMS1/2/3 et URMS1/2/3.
+NB: Ces items ne sont pas forcément disponibles ni n'ont les mêmes noms en mode 'historique' (à 1200 bauds)
+
+* Changer baudrate=9600 en baudrate=1200 pour fonctionner en mode 'historique'
+* Expérimenter `python teleinfo.py all` pour connaitre les items disponibles
+
 ## teleinfo.py
 Utilisé pour tester la récupération des données en Python sur la Pi
 Si la liste des paramètres est 'all', tous les paramètres sous ajoutés dans la liste des items
