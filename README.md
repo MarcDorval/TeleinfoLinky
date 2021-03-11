@@ -33,14 +33,20 @@ A partir de Jeedom : 1 Requete SCRIPT par item : /var/www/html/plugins/script/co
 sudo apt-get install mosquitto
 
 > Le broker mosquitto est direcetement installé et lancé
+
 > vérif:
+
+```bash
 sudo systemctl list-unit-files --type=service | grep mosquitto
 sudo systemctl status mosquitto.service
+```
 
 ### 2. Lecture des infos de teleinformation
 
+```bash
 sudo pip3 install paho-mqtt
 sudo pip3 install pyserial
+```
 
 Dans mqtt_linky_read_publish.py:
 
