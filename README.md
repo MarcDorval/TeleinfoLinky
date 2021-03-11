@@ -32,7 +32,7 @@ A partir de Jeedom : 1 Requete SCRIPT par item : /var/www/html/plugins/script/co
 
 sudo apt-get install mosquitto
 
-> Le broker mosquitto est direcetement installé et lancé
+> Le broker mosquitto est directement installé et lancé
 
 > vérif:
 
