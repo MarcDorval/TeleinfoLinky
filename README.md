@@ -104,3 +104,4 @@ sudo systemctl status mqtt_linky.service
 Une fois lancé, les infos listées dans mqtt_linky_read_publish.py/linky_args sont publiées dans le broker dès réception.
 
 le service est démarré au démarrage du réseau (Ethernet) et relancé si jamais il s'arrête
+
