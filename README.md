@@ -24,12 +24,90 @@ Utilisé pour lire les fichiers créées par teleinfo_ram.py par Jeedom
 
 A partir de Jeedom : 1 Requete SCRIPT par item : /var/www/html/plugins/script/core/ressources/cat_file.php "/var/tmp_ram/IRMS1"
 
+## Option 2: Linky vers MQTT
 
+3 étapes:
 
-#### cat /boot/config.txt | grep -v ^# | grep -v ^$
+### 1. Installation d'un broker mosquitto en local sur la Pi
+
+sudo apt-get install mosquitto
+
+> Le broker mosquitto est directement installé et lancé
+
+> vérif:
+
+```bash
+sudo systemctl list-unit-files --type=service | grep mosquitto
+sudo systemctl status mosquitto.service
 ```
-dtparam=audio=on
-dtoverlay=w1-gpio
-dtoverlay=pi3-disable-bt
-dtoverlay=sdio
+
+### 2. Lecture des infos de teleinformation
+
+```bash
+sudo pip3 install paho-mqtt
+sudo pip3 install pyserial
 ```
+
+Dans mqtt_linky_read_publish.py:
+
+```python
+import serial
+baudrate=9600
+
+ser = serial.Serial('/dev/ttyAMA0', baudrate, bytesize=7, timeout=1)
+ser.isOpen()
+response = ser.readline()
+if response != "":
+    . . .
+```
+
+### 3. Publication vers le broker
+
+Dans mqtt_linky_read_publish.py:
+
+```python
+from mymqtt import myMqtt
+from paho.mqtt import client as mqtt_client
+
+linky_args = ["URMS1", "IRMS1", "URMS2", "IRMS2", "URMS3", "IRMS3"]
+broker="PiCuisine"
+mqttc = myMqtt("linky2mqtt")
+. . .
+mqttc.publish(mqtt_item, value)
+```
+
+### 4. Lancement au demarrage du script
+
+#### creation d'un service `mqtt_linky`
+
+fichier mqtt_linky.service:
+
+```bash
+[Unit]
+Description=Mosquitto client reading UART for Linky and publishing selected items to a local MQTT broker
+After=network.target
+AssertPathExists=/sys/class/net/wlan0
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /home/pi/TeleinfoLinky/mqtt_linky_read_publish.py
+Restart=always
+
+[Install]
+WantedBy=mosquitto.service
+```
+
+#### Installation du service `mqtt_linky`
+
+```bash
+sudo cp mqtt_linky.service /usr/local/lib/systemd/system/mqtt_linky.service
+sudo systemctl daemon-reload
+sudo systemctl enable mqtt_linky.service
+sudo systemctl start  mqtt_linky.service
+sudo systemctl status mqtt_linky.service
+```
+
+Une fois lancé, les infos listées dans mqtt_linky_read_publish.py/linky_args sont publiées dans le broker dès réception.
+
+le service est démarré au démarrage du réseau (Ethernet) et relancé si jamais il s'arrête
+

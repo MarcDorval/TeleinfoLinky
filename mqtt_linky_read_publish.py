@@ -11,7 +11,6 @@ import random
 import serial
 import time
 import sys
-import json
 
 from mymqtt import myMqtt
 from paho.mqtt import client as mqtt_client
