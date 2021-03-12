@@ -35,7 +35,7 @@ looping = 1
 
 try:
   while True:
-    # Disconnect qnd reconnect after receiving all items, to keep mosquitto connected
+    # Disconnect and reconnect after receiving all items, to keep mosquitto connected
     # there is probably a better method, but so far it works
     count = 0
     mqttc.connect_to(broker)
