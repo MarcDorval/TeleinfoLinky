@@ -16,8 +16,8 @@ from paho.mqtt import client as mqtt_client
 
 broker="PiCuisine"
 
-mqttc = myMqtt("mowgli")
+mqttc = myMqtt("moquette")
 mqttc.connect_to(broker)
 
-mqttc.subscribe([("linky/URMS1", 1), ("linky/IRMS1", 1)])
+mqttc.subscribe([("linky/#", 1)])
 mqttc.listen()

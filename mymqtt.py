@@ -28,8 +28,9 @@ class myMqtt():
         print(f"socket close")
 
     def connect_to(self, broker, port=1883):
+        self.port = port
         self.client.connect(broker, port, keepalive=600)
-        self.client.will_set(topic="will/msg", payload="Thisis my last will, I'm disconnected without asking for it")
+        self.client.will_set(topic="will/msg", payload=f"{self.client_id}: This is my last will, I'm disconnected without asking for it")
 
     def disconnect(self):
         self.client.disconnect()
