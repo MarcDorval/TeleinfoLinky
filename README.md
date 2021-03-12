@@ -111,3 +111,25 @@ Une fois lancé, les infos listées dans mqtt_linky_read_publish.py/linky_args s
 
 le service est démarré au démarrage du réseau (Ethernet) et relancé si jamais il s'arrête
 
+#### Redémarrage du service `mqtt_linky` après modifications
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart mqtt_linky.service
+```
+
+#### Suivi des messages postés
+
+On démarre un client sur tous les topics 'linky'
+
+```bash
+/usr/bin/python3 /home/pi/TeleinfoLinky/mqtt_linky_listen.py
+```
+
+#### Surveillance des soucis du service `mqtt_linky`
+
+Afin d'essayer de comprendre pourquoi le service est parfois arrêté, on lance un client qui surveille le message de 'will'
+
+```bash
+/usr/bin/python3 /home/pi/TeleinfoLinky/mqtt_linky_undertaker.py
+```

@@ -28,14 +28,14 @@ class myMqtt():
         print(f"socket close")
 
     def connect_to(self, broker, port=1883):
-        self.client.connect(broker, port, keepalive=60)
+        self.port = port
+        self.client.connect(broker, port, keepalive=600)
+        self.client.will_set(topic="will/msg", payload=f"{self.client_id}: This is my last will, I'm disconnected without asking for it")
 
     def disconnect(self):
         self.client.disconnect()
 
     def on_message(self, c, userdata, msg):
-        print(userdata)
-        print(msg)
         print(f"< {msg.topic}: {msg.payload.decode()}")
 
     def on_log(self, userdata, level, buf):

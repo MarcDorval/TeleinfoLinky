@@ -15,9 +15,10 @@ from mymqtt import myMqtt
 from paho.mqtt import client as mqtt_client
 
 broker="PiCuisine"
+port = 1883
 
-mqttc = myMqtt("moquette")
-mqttc.connect_to(broker)
+mqttc = myMqtt("undertaker")
+mqttc.connect_to(broker, port)
 
-mqttc.subscribe([("linky/#", 1)])
+mqttc.subscribe([("will/#", 1)])
 mqttc.listen()
