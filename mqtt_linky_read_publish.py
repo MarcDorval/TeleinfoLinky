@@ -17,8 +17,10 @@ from paho.mqtt import client as mqtt_client
 
 linky_args = ["URMS1", "IRMS1", "URMS2", "IRMS2", "URMS3", "IRMS3"]
 broker="PiCuisine"
+client_id="linky2mqtt"
 port = 1883
-mqttc = myMqtt("linky2mqtt")
+mqttc = myMqtt(client_id)
+ymdhms = mqttc.yyyymmddhhmmss()
 
 """
 Mode de teleinformation dit 'standard': 
@@ -31,6 +33,10 @@ baudrate=9600
 
 ser = serial.Serial('/dev/ttyAMA0', baudrate, bytesize=7, timeout=1)
 ser.isOpen()
+
+mqttc.connect_to(broker, port)
+mqttc.publish(f"time/{client_id}/start/loop", ymdhms)
+mqttc.disconnect()
 
 try:
   while True:

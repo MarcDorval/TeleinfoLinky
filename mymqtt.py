@@ -41,7 +41,7 @@ class myMqtt():
 
     def on_message(self, c, userdata, msg):
         ymdhms = self.yyyymmddhhmmss()
-        if msg.topic == "will":
+        if "last will" in msg.topic:
             print(f"{ymdhms} < {msg.topic}: {msg.payload.decode()}")
         else:
             print(f"< {msg.topic}: {msg.payload.decode()}")
@@ -74,4 +74,3 @@ class myMqtt():
 
     def deaf(self):
         self.client.loop_stop()
-

@@ -19,6 +19,5 @@ port = 1883
 
 mqttc = myMqtt("undertaker")
 mqttc.connect_to(broker, port)
-
 mqttc.subscribe([("will/#", 1)])
 mqttc.listen()
