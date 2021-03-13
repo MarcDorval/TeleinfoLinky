@@ -44,10 +44,9 @@ try:
     # there is probably a better method, but so far it works
     count = 0
     mqttc.connect_to(broker, port)
-    while count < len(linky_args):
+    while count < 20*len(linky_args):
       response = ser.readline()
       localtime = time.asctime( time.localtime(time.time()) )
-      count = count + 1
       # If one of the arguments is not found, we must exit after a while
       if response != "":
         # print "# The line is not empty, let's go on..." 
@@ -60,13 +59,13 @@ try:
           item  = items[0].decode('utf-8')
           value = items[splitLen-2]
           if str(item) in linky_args:
+            count = count + 1
             if value.isdigit():
               # Remove leading zeros from numerical values
               value_int = int(value)
               value = str(value_int)
-            mqtt_item = f"linky/{item}"
-            mqttc.publish(mqtt_item, value)
-            count = 0
+            mqttc.publish(f"linky/{item}", value)
+            # count = 0
     mqttc.disconnect()
 except KeyboardInterrupt:
   ser.close()
