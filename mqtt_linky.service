@@ -6,7 +6,6 @@ AssertPathExists=/sys/class/net/eth0
 [Service]
 Type=simple
 ExecStart=/usr/bin/python3 /home/pi/TeleinfoLinky/mqtt_linky_read_publish.py
-RestartSec=20
 Restart=always
 
 [Install]
