@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import datetime
 from paho.mqtt import client as mqtt_client
 
 class myMqtt():
@@ -16,10 +17,11 @@ class myMqtt():
         print(self.client)
 
     def on_connect(self, mqtt_client_id, userdata, flags, rc):
+        ymdhms = self.yyyymmddhhmmss()
         if rc == 0:
-            print(f"Connected to MQTT Broker {self.broker}!")
+            print(f"{ymdhms}: {self.client_id} Connected to MQTT Broker {self.broker}")
         else:
-            print(f"Failed to connect to MQTT Broker {self.broker}, return code %d\n", rc)
+            print(f"{ymdhms}: {self.client_id} Failed to connect to MQTT Broker {self.broker}, return code %d\n", rc)
 
     def on_socket_open(self):
         print(f"socket open")
@@ -28,15 +30,25 @@ class myMqtt():
         print(f"socket close")
 
     def connect_to(self, broker, port=1883):
+        ymdhms = self.yyyymmddhhmmss()
         self.port = port
         self.client.connect(broker, port, keepalive=600)
-        self.client.will_set(topic="will/msg", payload=f"{self.client_id}: This is my last will, I'm disconnected without asking for it")
+        self.publish(topic=f"time/{self.client_id}/start", msg=ymdhms)
+        self.client.will_set(topic="will/msg", payload=f"{self.client_id}: This is my last will, I'm disconnected without asking for it. I started at {ymdhms}")
 
     def disconnect(self):
         self.client.disconnect()
 
     def on_message(self, c, userdata, msg):
-        print(f"< {msg.topic}: {msg.payload.decode()}")
+        ymdhms = self.yyyymmddhhmmss()
+        if msg.topic == "will":
+            print(f"{ymdhms} < {msg.topic}: {msg.payload.decode()}")
+        else:
+            print(f"< {msg.topic}: {msg.payload.decode()}")
+
+    def yyyymmddhhmmss(self):
+        now = datetime.datetime.now()
+        return now.strftime("%Y-%m-%d %H:%M:%S")
 
     def on_log(self, userdata, level, buf):
         print("log: ", buf)
