@@ -48,6 +48,7 @@ try:
       response = ser.readline()
       localtime = time.asctime( time.localtime(time.time()) )
       # If one of the arguments is not found, we must exit after a while
+      count = count + 1
       if response != "":
         # print "# The line is not empty, let's go on..." 
         items = response.split()
@@ -59,13 +60,11 @@ try:
           item  = items[0].decode('utf-8')
           value = items[splitLen-2]
           if str(item) in linky_args:
-            count = count + 1
             if value.isdigit():
               # Remove leading zeros from numerical values
               value_int = int(value)
               value = str(value_int)
             mqttc.publish(f"linky/{item}", value)
-            # count = 0
     mqttc.disconnect()
 except KeyboardInterrupt:
   ser.close()
