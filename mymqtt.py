@@ -44,7 +44,7 @@ class myMqtt():
         if "last will" in msg.topic:
             print(f"{ymdhms} < {msg.topic}: {msg.payload.decode()}")
         else:
-            print(f"< {msg.topic}: {msg.payload.decode()}")
+            print(f"{ymdhms} < {msg.topic}: {msg.payload.decode()}")
 
     def yyyymmddhhmmss(self):
         now = datetime.datetime.now()
