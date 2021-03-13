@@ -82,20 +82,7 @@ mqttc.publish(mqtt_item, value)
 
 fichier mqtt_linky.service:
 
-```bash
-[Unit]
-Description=Mosquitto client reading UART for Linky and publishing selected items to a local MQTT broker
-After=network.target
-AssertPathExists=/sys/class/net/wlan0
-
-[Service]
-Type=simple
-ExecStart=/usr/bin/python3 /home/pi/TeleinfoLinky/mqtt_linky_read_publish.py
-Restart=always
-
-[Install]
-WantedBy=mosquitto.service
-```
+[mqtt_linky.service](mqtt_linky.service)
 
 #### Installation du service `mqtt_linky`
 
