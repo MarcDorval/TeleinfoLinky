@@ -44,7 +44,7 @@ try:
     # there is probably a better method, but so far it works
     count = 0
     mqttc.connect_to(broker, port)
-    while count < 20*len(linky_args):
+    while count < 200:
       response = ser.readline()
       localtime = time.asctime( time.localtime(time.time()) )
       # If one of the arguments is not found, we must exit after a while
