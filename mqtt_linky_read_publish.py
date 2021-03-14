@@ -12,12 +12,10 @@ import serial
 import time
 import sys
 
-global client_id
-client_id="linky2mqtt"
-
 from mymqtt import myMqtt
 from paho.mqtt import client as mqtt_client
 
+client_id="linky2mqtt"
 linky_args = ["URMS1", "IRMS1", "URMS2", "IRMS2", "URMS3", "IRMS3"]
 broker="PiCuisine"
 port = 1883
@@ -37,8 +35,10 @@ ser = serial.Serial('/dev/ttyAMA0', baudrate, bytesize=7, timeout=1)
 ser.isOpen()
 
 mqttc.connect_to(broker, port)
-mqttc.publish(f"time/{client_id}/start/loop", ymdhms)
-#mqttc.disconnect()
+
+mqttc.log.info(f"time/{client_id}/start/loop")
+mqttc.publish(topic=f"time/{client_id}/start/loop", msg=ymdhms)
+mqttc.disconnect()
 
 try:
   while True:
@@ -66,7 +66,7 @@ try:
               # Remove leading zeros from numerical values
               value_int = int(value)
               value = str(value_int)
-            mqttc.publish(f"linky/{item}", value)
+            mqttc.publish(topic=f"linky/{item}", msg=value, retain=False)
     mqttc.disconnect()
 except KeyboardInterrupt:
   ser.close()
