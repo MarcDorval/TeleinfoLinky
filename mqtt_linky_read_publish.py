@@ -12,12 +12,14 @@ import serial
 import time
 import sys
 
+global client_id
+client_id="linky2mqtt"
+
 from mymqtt import myMqtt
 from paho.mqtt import client as mqtt_client
 
 linky_args = ["URMS1", "IRMS1", "URMS2", "IRMS2", "URMS3", "IRMS3"]
 broker="PiCuisine"
-client_id="linky2mqtt"
 port = 1883
 mqttc = myMqtt(client_id)
 ymdhms = mqttc.yyyymmddhhmmss()
@@ -36,7 +38,7 @@ ser.isOpen()
 
 mqttc.connect_to(broker, port)
 mqttc.publish(f"time/{client_id}/start/loop", ymdhms)
-mqttc.disconnect()
+#mqttc.disconnect()
 
 try:
   while True:
@@ -44,7 +46,7 @@ try:
     # there is probably a better method, but so far it works
     count = 0
     mqttc.connect_to(broker, port)
-    while count < 200:
+    while count < 100:
       response = ser.readline()
       localtime = time.asctime( time.localtime(time.time()) )
       # If one of the arguments is not found, we must exit after a while
