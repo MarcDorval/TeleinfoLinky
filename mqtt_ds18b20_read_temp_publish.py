@@ -44,13 +44,8 @@ if nb_sensors == 0:
 else:
     mqttc.publish(topic=f"time/{client_id}/start/loop", msg=ymdhms)
 
-mqttc.disconnect()
-
 try:
   while True:
-    # Disconnect and reconnect after receiving all items, to keep mosquitto connected
-    # there is probably a better method, but so far it works
-    mqttc.connect_to(broker, port)
     for id in sensors:
         if "28-" in id:
             ds18b20_file = open(f"/sys/bus/w1/devices/{id}/{item}", "r")
@@ -58,11 +53,15 @@ try:
             ds18b20_file.close()
             for line in file_content.split("\n"):
                 if len(line) > 0:
-                    if line != item_values[id]:
-                        print(f"topic=ds28b20/{id}/{item} msg={line}")
-                        mqttc.publish(topic=f"ds28b20/{id}{item}", msg=line, retain=True)
-                        item_values[id] = line
-    mqttc.disconnect()
+                    value = line
+                    if item == "temperature":
+                        # Temperature values are in 1/1000 °C
+                        value_int = int(value)
+                        value = str(value_int/1000)
+                    if value != item_values[id]:
+                        print(f"topic=ds28b20/{id}/{item} msg={value}")
+                        mqttc.publish(topic=f"ds28b20/{id}/{item}", msg=value, retain=True)
+                        item_values[id] = value
     time.sleep(5)
 except KeyboardInterrupt:
-  exit()
+  ser.close()
