@@ -1,0 +1,12 @@
+[Unit]
+Description=Mosquitto client reading all connected DS18B20s temperature sensors and publishing temperatures to a local MQTT broker
+After=network.target
+AssertPathExists=/sys/class/net/eth0
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /home/pi/TeleinfoLinky/mqtt_ds18b20_read_temp_publish.py
+Restart=always
+
+[Install]
+WantedBy=mosquitto.service

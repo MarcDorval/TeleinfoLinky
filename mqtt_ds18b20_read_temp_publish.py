@@ -7,8 +7,6 @@
 #  use case: python3 mqtt_ds18b20_read_temp_publish.py
 """
 
-import random
-import serial
 import time
 import sys
 import os
