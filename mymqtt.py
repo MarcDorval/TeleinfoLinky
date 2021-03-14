@@ -3,7 +3,11 @@
 import datetime
 import logging
 from paho.mqtt import client as mqtt_client
-logging.basicConfig(filename=f"mqtt.log", level=logging.DEBUG)
+
+log_file = "mqtt.log"
+
+print(f"logging to {log_file}. follow execution using 'tail -f {log_file}'")
+logging.basicConfig(filename=log_file, level=logging.DEBUG)
 
 class myMqtt():
     """
