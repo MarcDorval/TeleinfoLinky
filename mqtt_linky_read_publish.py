@@ -68,6 +68,12 @@ try:
               value = str(value_int)
             mqttc.publish(topic=f"linky/{item}", msg=value, retain=False)
     mqttc.disconnect()
+except serial.serialutil.SerialException as e:
+  print(f"serial.serialutil.SerialException {e}")
+  mqttc.log.error(f"serial.serialutil.SerialException {e}")
+  mqttc.publish(topic=f"linky/exception", msg=e, retain=True)
+  time.sleep(30)
+  exit()
 except KeyboardInterrupt:
   ser.close()
 
