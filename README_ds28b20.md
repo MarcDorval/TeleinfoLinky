@@ -1,29 +1,25 @@
-# Scripts bash et Python permettant de monitorer la temperature via des capteurs ds18b20
 
-## ds18b20 vers MQTT
+# (Python3) ds18b20 to MQTT on Rapsberry Pi
 
-3 étapes:
+**Scripts bash et Python3 permettant de monitorer la temperature via des capteurs ds18b20 en MQTT via un service démarré au boot**
 
-### 1. Installation des resources '1-wire'
+## Installation des resources '1-wire'
 
 [temperatures_setup.sh (triggers a reboot!)](temperatures_setup.sh)
 
-### 2. Installation d'un broker mosquitto en local sur la Pi
+## Installation d'un broker mosquitto en local sur la Pi
 
-sudo apt-get install mosquitto
+[mosquitto install](README_mosquitto.md)
 
-> Le broker mosquitto est directement installé et lancé
+## module python3 mymqtt
 
-> vérif:
+> Generic MQTT module to publish or subscribe to a MQTT broker with logging
 
-```bash
-sudo systemctl list-unit-files --type=service | grep mosquitto
-sudo systemctl status mosquitto.service
-```
+[mymqtt.py](mymqtt.py)
 
-### 3. Recherche des capteurs ds18b20
+## [mqtt_ds18b20_read_temp_publish.py](mqtt_ds18b20_read_temp_publish.py)
 
-Dans mqtt_ds18b20_read_publish.py:
+### Recherche des capteurs ds18b20
 
 ```python
 import os
@@ -42,9 +38,14 @@ for id in sensors:
 
 ```
 
-### 4. Lecture de la valeur de chacun des capteurs
+### Connection au broker local en tant que publisher
 
-Dans mqtt_ds18b20_read_temp_publish.py:
+```python
+mqttc.connect_to(broker, port, publisher=True)
+mqttc.log.info(f"time/{client_id}/start/loop")
+```
+
+### Lecture de la valeur de chacun des capteurs
 
 ```python
     for id in sensors:
@@ -59,16 +60,14 @@ Dans mqtt_ds18b20_read_temp_publish.py:
 . . .
 ```
 
-### 5. Publication vers le broker
-
-Dans mqtt_ds18b20_read_temp_publish.py:
+### Publication vers le broker local
 
 ```python
 from mymqtt import myMqtt
 from paho.mqtt import client as mqtt_client
 
 client_id="ds18_mqtt"
-broker="PiCuisine"
+broker="127.0.01"
 port = 1883
 mqttc = myMqtt(client_id)
 
@@ -77,15 +76,33 @@ mqttc = myMqtt(client_id)
 . . .
 ```
 
-### 6. Lancement au demarrage du script
+## Test du script python
 
-#### creation d'un service `mqtt_ds18b20`
+### Lancement en 'python direct'
+
+```bash
+/usr/bin/python3 /home/pi/TeleinfoLinky/mqtt_ds18b20_read_temp_publish.py
+```
+
+Les valeurs de température sont listées à la première lecture, puis à chaque changement de valeur.
+
+### Suivi des messages postés
+
+```bash
+tail -f /home/pi/TeleinfoLinky/mqtt.log
+```
+
+## Lancement au demarrage du script
+
+(à ne faire qu'une fois que le script fonctionne en 'python direct')
+
+### creation d'un service `mqtt_ds18b20`
 
 fichier mqtt_ds18b20.service:
 
 [mqtt_ds18b20.service](mqtt_ds18b20.service)
 
-#### Installation du service `mqtt_ds18b20`
+### Installation du service `mqtt_ds18b20`
 
 ```bash
 sudo cp mqtt_ds18b20.service /usr/local/lib/systemd/system/mqtt_ds18b20.service
@@ -95,38 +112,20 @@ sudo systemctl start  mqtt_ds18b20.service
 sudo systemctl status mqtt_ds18b20.service
 ```
 
-Une fois lancé, les infos listées dans mqtt_ds18b20_read_temp_publish.py/linky_args sont publiées dans le broker
+> Une fois lancé, les infos listées dans mqtt_ds18b20_read_temp_publish.py/linky_args sont publiées dans le broker
 si elles diffèrent des précedentes.
 
-le service est démarré au démarrage du réseau (Ethernet) et relancé si jamais il s'arrête
+> le service est démarré au démarrage du réseau (Ethernet) et relancé si jamais il s'arrête
 
-#### Redémarrage du service `mqtt_ds18b20` après modifications
+### Redémarrage du service `mqtt_ds18b20` (après modifications)
 
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl restart mqtt_ds18b20.service
 ```
 
-#### validation facile
+## Suivi des logs de mosquitto
 
 ```bash
-/usr/bin/python3 /home/pi/TeleinfoLinky/mqtt_ds18b20_read_temp_publish.py
-```
-
-Les valeurs de température sont listées à la première lecture, puis à chaque changement de valeur.
-
-#### Suivi des messages postés
-
-On surveille les messages dans le fichier de log `mqtt.log`
-
-```bash
-tail -f /home/pi/TeleinfoLinky/mqtt.log
-```
-
-#### Surveillance des soucis du service `mqtt_ds18b20`
-
-Afin d'essayer de comprendre pourquoi le service est parfois arrêté, on lance un client qui surveille le message de 'will'
-
-```bash
-/usr/bin/python3 /home/pi/TeleinfoLinky/mqtt_linky_undertaker.py
+tail -f /tmp/mosquitto.log
 ```
