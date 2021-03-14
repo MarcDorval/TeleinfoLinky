@@ -15,7 +15,7 @@ from mymqtt import myMqtt
 from paho.mqtt import client as mqtt_client
 
 client_id="ds18_mqtt"
-broker="PiCuisine"
+broker="127.0.01"
 port = 1883
 mqttc = myMqtt(client_id)
 ymdhms = mqttc.yyyymmddhhmmss()
@@ -32,7 +32,7 @@ for id in sensors:
         item_values[id]=""
         nb_sensors += 1
         
-mqttc.connect_to(broker, port)
+mqttc.connect_to(broker, port, publisher=True)
 mqttc.log.info(f"time/{client_id}/start/loop")
 
 if nb_sensors == 0:
