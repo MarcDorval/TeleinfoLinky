@@ -34,8 +34,7 @@ baudrate=9600
 ser = serial.Serial('/dev/ttyAMA0', baudrate, bytesize=7, timeout=1)
 ser.isOpen()
 
-mqttc.connect_to(broker, port, keepalive=30)
-mqttc.client.loop_start()
+mqttc.connect_to(broker, port, keepalive=30, publisher=True)
 mqttc.log.info(f"time/{client_id}/start/loop")
 mqttc.publish(topic=f"time/{client_id}/start/loop", msg=ymdhms)
 
