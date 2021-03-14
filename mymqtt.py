@@ -38,11 +38,18 @@ class myMqtt():
 
     def on_socket_close(self):
         self.log.info(f"socket close")
+        self.client.connect(self.broker, self.port, self.keepalive)
 
-    def connect_to(self, broker, port=1883):
+    def connect_to(self, broker, port=1883, keepalive=60):
+        self.broker = broker
+        self.port = port
+        self.keepalive = keepalive
         ymdhms = self.yyyymmddhhmmss()
         self.port = port
-        self.client.connect(broker, port, keepalive=600)
+        try:
+            self.client.connect(broker, port, keepalive)
+        except Exception as e:
+            logging.error(f"{e}")
         self.publish(topic=f"time/{self.client_id}/start", msg=ymdhms)
         self.client.will_set(topic="will/msg", payload=f"{self.client_id}: This is my last will, I'm disconnected without asking for it. I started at {ymdhms}")
 
@@ -78,6 +85,8 @@ class myMqtt():
             self.log.info(f"{self.client_id} > {topic}: {msg}")
         else:
             self.log.info(f"Failed to send message to topic {topic}: result {str(result)}")
+            self.client.reconnect()
+            self.client.publish(topic, msg, retain)
 
     def listen(self):
         self.client.loop_forever()
