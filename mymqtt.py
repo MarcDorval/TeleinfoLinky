@@ -77,10 +77,10 @@ class myMqtt():
         if status == 0:
             self.log.info(f"{self.client_id} > {topic}: {msg}")
         else:
-            self.log.info(f"Failed to send message to topic {topic}")
+            self.log.info(f"Failed to send message to topic {topic}: result {str(result)}")
 
     def listen(self):
-        self.client.loop_forever(timeout=1.0)
+        self.client.loop_forever()
 
     def deaf(self):
         self.log.info(f"deaf??")
