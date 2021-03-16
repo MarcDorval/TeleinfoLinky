@@ -56,7 +56,7 @@ class myMqtt():
             logging.error(f"{e}")
         if publisher:
             """
-            With paho.mqtt, publishers need to call loop_start() to send regular PINGs 
+            With paho.mqtt, publishers need to call loop_start() to send regular PINGs
             """
             self.client.loop_start()
         self.publish(topic=f"time/{self.client_id}/start", msg=ymdhms)
