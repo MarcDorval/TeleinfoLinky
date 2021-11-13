@@ -23,7 +23,7 @@ try:
   while looping:
     response = ser.readline().decode("utf-8")
     localtime = time.asctime( time.localtime(time.time()) )
-    if debug:  print("count " + str(count) + " empty_count " + str(empty_count) + " | ", end='')
+    if debug:  print("count " + str(count) + " | ", end='')
     count = count + 1
     if count >= 100:
       looping = 0
