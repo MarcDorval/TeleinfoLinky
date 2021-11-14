@@ -8,6 +8,7 @@ baudrate = 9600
 
 ser = serial.Serial('/dev/ttyAMA0', baudrate, bytesize=7, timeout=1)
 ser.isOpen()
+
 count=0
 looping = 1
 results_table=""
