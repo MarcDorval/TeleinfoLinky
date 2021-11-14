@@ -74,23 +74,26 @@ while True:
           value = str(value_int)
           if value != item_values[item]:
             item_values[item] = value
-            if trace: print(item + " " + str(value))
-            mqttc.publish(topic=f"linky/{item}", msg=str(value), retain=False)
+            if trace: print(f"{item:8} {str(value)}")
+            mqttc.publish(topic=f"linky/item/{item}", msg=str(value), retain=False)
           else:
             if debug: print(" unchanged  " + item + " " + str(value))
   except serial.serialutil.SerialException as e:
-    if "device reports readiness to read but returned no data" in str(e):
+    if "device " in str(e):
+      if debug: print("passing over " + str(e) +" exception")
       pass
     else:
-      print(f"\nserial.serialutil.SerialException {e}\n")
-      mqttc.log.error(f"serial.serialutil.SerialException {e}")
-      mqttc.publish(topic=f"linky/exception", msg=str(e), retain=True)
-      time.sleep(1)
-      ser = serial.Serial('/dev/ttyAMA0', baudrate, bytesize=7, timeout=1)
-      ser.isOpen()
+      if debug: print(f"serial.serialutil.SerialException {e}")
+      #mqttc.log.error(f"serial.serialutil.SerialException {e}")
+      #mqttc.publish(topic=f"linky/exception", msg=str(e), retain=True)
+      #time.sleep(1)
+      #ser = serial.Serial('/dev/ttyAMA0', baudrate, bytesize=7, timeout=1)
+      #ser.isOpen()
       pass
       #ser.close()
       #exit()
+  except ValueError:
+    pass
   except KeyboardInterrupt:
     ser.close()
     sys.exit(0)

@@ -22,7 +22,7 @@ if item in sys.argv:
 try:
   print("...demarrage du mode standard a "+str(baudrate)+"... ")
   while looping:
-    response = ser.readline().decode("utf-8")
+    response = ser.readline().decode("utf-8", errors='ignore')
     localtime = time.asctime( time.localtime(time.time()) )
     if debug:  print("count " + str(count) + " | ", end='')
     count = count + 1

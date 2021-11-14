@@ -10,7 +10,7 @@ from paho.mqtt import client as mqtt_client
 
 log_file = "mqtt.log"
 
-print(f"logging to {log_file}. follow execution using 'tail -f {log_file}'")
+print(f"logging to {log_file}. follow execution using 'tail -f {log_file}' or 'mosquitto_sub  --topic linky/item/# -d -i local_listen'")
 logging.basicConfig(filename=log_file, level=logging.DEBUG)
 
 class myMqtt():
