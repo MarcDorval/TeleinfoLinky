@@ -72,10 +72,11 @@ while True:
           # Remove leading zeros from numerical values
           value_int = int(value)
           value = str(value_int)
+          if trace: print(f"linky/item/{item:8} {str(value)}", end='\c')
           if value != item_values[item]:
             item_values[item] = value
-            if trace: print(f"{item:8} {str(value)}")
-            mqttc.publish(topic=f"linky/item/{item}", msg=str(value), retain=False)
+            res = mqttc.publish(topic=f"linky/item/{item}", msg=str(value), retain=False)
+            if trace: print(f"linky/item/{item:8} {str(value)}")
           else:
             if debug: print(" unchanged  " + item + " " + str(value))
   except serial.serialutil.SerialException as e:
