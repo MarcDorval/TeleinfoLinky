@@ -1,5 +1,6 @@
 [Unit]
 Description=Mosquitto client reading UART for Linky and publishing selected items to a local MQTT broker
+Requires mosquitto.service
 After=network.target
 AssertPathExists=/sys/class/net/eth0
 
