@@ -13,13 +13,12 @@ import sys
 import logging
 
 from mymqtt import myMqtt
-from paho.mqtt import client as mqtt_client
 
 client_id="linky2mqtt"
 linky_args = ["URMS1", "IRMS1", "URMS2", "IRMS2", "URMS3", "IRMS3"]
-broker="127.0.0.1"
+broker="localhost.local"
 port = 1883
-mqttc = myMqtt(client_id)
+mqttc = myMqtt(client_id, username="python", password="mymqtt")
 ymdhms = mqttc.yyyymmddhhmmss()
 item_values={}
 """
