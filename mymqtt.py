@@ -10,8 +10,8 @@ from paho.mqtt import client as mqtt_client
 
 log_file = "mqtt.log"
 
-print(f"logging to {log_file}. follow execution using 'tail -f {log_file}' or 'mosquitto_sub  --topic linky/item/# -d -i local_listen'")
-logging.basicConfig(filename=log_file, level=logging.DEBUG)
+print(f"logging to {log_file}. follow execution using 'tail -f {log_file}' or 'mosquitto_sub --port 1883 --debug --username home --pw assistant --topic linky/item/#'")
+logging.basicConfig(filename=log_file, level=logging.INFO)
 
 class myMqtt():
     """
@@ -19,9 +19,12 @@ class myMqtt():
     """
     client_id = ""
     broker = ""
+    # keep port set to 1883 if using username/password. 8883 forces use of TLS
     port = 1883
 
-    def __init__(self, client_id):
+    def __init__(self, client_id, username="python", password="mymqtt"):
+        self.username = username
+        self.password = password
         self.client_id = client_id
         self.client = mqtt_client.Client(client_id)
         # print(self.client)
@@ -29,11 +32,22 @@ class myMqtt():
         #self.log.basic(filename=f"{log_client_id}.txt", encoding='utf-8', level=logging.DEBUG)
         self.client.enable_logger(self.log)
         self.log.info(f"init complete")
+        self.client.username_pw_set(self.username, self.password)
 
     def on_connect(self, mqtt_client_id, userdata, flags, rc):
         ymdhms = self.yyyymmddhhmmss()
         if rc == 0:
             self.log.info(f"{ymdhms}: {self.client_id} Connected to MQTT Broker {self.broker}")
+        elif rc == 1:
+            self.log.info(f"{ymdhms}: {self.client_id} Connection refused  incorrect protocol version {self.broker}")
+        elif rc == 2:
+            self.log.info(f"{ymdhms}: {self.client_id} Connection refused  invalid client identifier {self.broker}")
+        elif rc == 3:
+            self.log.info(f"{ymdhms}: {self.client_id} Connection refused  server unavailable {self.broker}")
+        elif rc == 4:
+            self.log.info(f"{ymdhms}: {self.client_id} Connection refused  bad username or password {self.broker}")
+        elif rc == 5:
+            self.log.info(f"{ymdhms}: {self.client_id} Connection refused  not authorised {self.broker}")
         else:
             self.log.info(f"{ymdhms}: {self.client_id} Failed to connect to MQTT Broker {self.broker}, return code %d\n", rc)
 
@@ -51,9 +65,12 @@ class myMqtt():
         ymdhms = self.yyyymmddhhmmss()
         self.port = port
         try:
-            self.client.connect(broker, port, keepalive)
+            res = self.client.connect(broker, port, keepalive)
         except Exception as e:
+            print(f"******** Exception Calling mymqtt.py/connect_to({broker}, {port}, keepalive={keepalive}, publisher=True)")
+            print(f"******** {e}")
             logging.error(f"{e}")
+            pass
         if publisher:
             """
             With paho.mqtt, publishers need to call loop_start() to send regular PINGs
@@ -93,7 +110,7 @@ class myMqtt():
         if status == 0:
             self.log.info(f"{self.client_id} > {topic}: {msg}")
         else:
-            self.log.info(f"Failed to send message to topic {topic}: result {str(result)}")
+            self.log.info(f"Failed to publish {topic}: {msg} result {str(result)}, reconnecting")
             """
             In case of publishing errors, reconnect
             """
