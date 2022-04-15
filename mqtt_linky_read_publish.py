@@ -16,7 +16,7 @@ from mymqtt import myMqtt
 
 client_id="linky2mqtt"
 linky_args = ["URMS1", "IRMS1", "URMS2", "IRMS2", "URMS3", "IRMS3"]
-broker="localhost.local"
+#broker="localhost.local"
 broker="PiCuisine"
 port = 1883
 mqttc = myMqtt(client_id, username="python", password="mymqtt")
