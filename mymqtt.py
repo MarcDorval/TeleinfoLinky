@@ -67,16 +67,23 @@ class myMqtt():
         try:
             res = self.client.connect(broker, port, keepalive)
         except Exception as e:
-            print(f"******** Exception Calling mymqtt.py/connect_to({broker}, {port}, keepalive={keepalive}, publisher=True)")
-            print(f"******** {e}")
-            logging.error(f"{e}")
+            msg = f"******** connect Exception Calling mymqtt.py/connect_to({broker}, {port}, keepalive={keepalive}, publisher=True) {e}"
+            print(msg)
+            logging.error(msg)
             pass
         if publisher:
             """
             With paho.mqtt, publishers need to call loop_start() to send regular PINGs
             """
             self.client.loop_start()
-        self.publish(topic=f"time/{self.client_id}/start", msg=ymdhms)
+        try:
+            self.publish(topic=f"time/{self.client_id}/start", msg=ymdhms)
+        except Exception as e:
+            msg = f"******** Exception Calling mymqtt.py/connect_to({broker}, {port}, keepalive={keepalive}, publisher=True) {e}"
+            print(msg)
+            logging.error(msg)
+            #pass
+    
         self.client.will_set(topic="will/msg", payload=f"{self.client_id}: This is my last will, I'm disconnected without asking for it. I started at {ymdhms}")
 
     def disconnect(self):
