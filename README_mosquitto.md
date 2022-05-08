@@ -1,5 +1,8 @@
 # Installation d'un broker mosquitto en local sur la Pi
 
+* (https://mosquitto.org/man/mosquitto-8.html)
+* (https://mosquitto.org/man/mosquitto-conf-5.html)
+
 sudo apt-get install mosquitto
 
 > Le broker mosquitto est directement installé et lancé
@@ -13,7 +16,7 @@ sudo systemctl status mosquitto.service
 
 # Modification du service mosquitto pour sauver les logs dans /tmp/mosquitto.log
 
-> /tmp/mosquitto.log, comme tous les fichiers de log, sera effacèe à chaque reboot de la Pi
+> /tmp/mosquitto.log, comme tous les fichiers de log, sera effacé à chaque reboot de la Pi
 
 ## Fichier /etc/mosquitto/mosquitto.conf:
 
@@ -41,6 +44,9 @@ include_dir /etc/mosquitto/conf.d
 sudo systemctl daemon-reload
 sudo systemctl restart mosquitto.service
 ```
+
+* --port: by default the mosquitto broker will listen on port 1883
+
 
 ## Verification du service mosquitto
 

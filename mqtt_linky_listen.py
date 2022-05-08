@@ -14,7 +14,7 @@ import sys
 from mymqtt import myMqtt
 from paho.mqtt import client as mqtt_client
 
-broker="PiCuisine"
+broker="127.0.0.1"
 
 mqttc = myMqtt("linky_listen")
 mqttc.connect_to(broker)

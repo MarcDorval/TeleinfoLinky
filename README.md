@@ -19,8 +19,8 @@ Test en ligne de commande : python teleinfo_ram.py  IRMS1 IRMS2 IRMS3 URMS1 URMS
 
 A partir de Jeedom : Requete SCRIPT : /var/www/html/plugins/script/core/ressources/teleinfo_ram.py "IRMS1 IRMS2 IRMS3 URMS1 URMS2 URMS3"
 
-## cat_file.php
-Utilisé pour lire les fichiers créées par teleinfo_ram.py par Jeedom
+## cat_file.php (obsolete: plus de Jeedom)
+Utilisé pour lire les fichiers créés par teleinfo_ram.py par Jeedom 
 
 A partir de Jeedom : 1 Requete SCRIPT par item : /var/www/html/plugins/script/core/ressources/cat_file.php "/var/tmp_ram/IRMS1"
 
@@ -41,7 +41,7 @@ sudo systemctl list-unit-files --type=service | grep mosquitto
 sudo systemctl status mosquitto.service
 ```
 
-modification du service mosquitto pour sauver les logs dans /tmp/mosquitto.log
+#### modification du service mosquitto pour sauver les logs dans /tmp/mosquitto.log
 
 fichier /etc/mosquitto/mosquitto.conf:
 
@@ -132,6 +132,13 @@ On démarre un client sur tous les topics 'linky'
 ```bash
 /usr/bin/python3 /home/pi/TeleinfoLinky/mqtt_linky_listen.py
 ```
+
+Ce script envoye ses logs vers /home/pi/TeleinfoLinky/mqtt.log, donc on peut le suivre avec:
+
+```bash
+tail -f /home/pi/TeleinfoLinky/mqtt.log
+```
+
 
 #### Surveillance des soucis du service `mqtt_linky`
 
